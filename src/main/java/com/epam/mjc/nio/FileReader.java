@@ -13,25 +13,23 @@ public class FileReader {
     public Profile getDataFromFile(File file) {
         Profile profile = new Profile();
 
-
-        try {
-            RandomAccessFile aFile = new RandomAccessFile(file.getPath(), "r");
+        try (RandomAccessFile aFile = new RandomAccessFile(file.getPath(), "r")){
             FileChannel inChanel = aFile.getChannel();
 
             ByteBuffer buffer = ByteBuffer.allocate(60);
-            String line = null;
+            StringBuilder line = new StringBuilder();
 
             while (inChanel.read(buffer) > 0) {
                 buffer.flip();
                 for (int i = 0; i <buffer.limit(); i++) {
-                    var currenctchar = (char) buffer.get();
-                    line += currenctchar;
+                    var currenctChar = (char) buffer.get();
+                    line.append(currenctChar);
                 }
                 buffer.clear();
             }
             inChanel.close();
 
-            String[] keyValuePair = line.split(System.lineSeparator());
+            String[] keyValuePair = line.toString().split(System.lineSeparator());
 
             for (int i = 0; i < keyValuePair.length; i++) {
                 keyValuePair[i] = keyValuePair[i].replaceAll("\\s", "");
